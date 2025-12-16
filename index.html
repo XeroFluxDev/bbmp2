@@ -730,13 +730,14 @@
                 noPosition.style.display = 'block';
             }
 
-            // Martingale
-            const martingale = data.martingale || {};
+            // Martingale - data is in risk_metrics.martingale
+            const riskMetrics = data.risk_metrics || {};
+            const martingale = riskMetrics.martingale || {};
             const streak = martingale.streak || 0;
-            const maxStreak = 8;
-            const baseSize = 500;
-            const multiplier = Math.pow(2, streak);
-            const currentSize = baseSize * multiplier;
+            const maxStreak = martingale.max_streak || 8;
+            const baseSize = martingale.base_position_size || 10;
+            const multiplier = martingale.current_multiplier || 1;
+            const currentSize = martingale.current_position_size || baseSize;
 
             document.getElementById('martingaleStep').textContent = `${streak} / ${maxStreak}`;
             document.getElementById('positionSizeMultiplier').textContent = `$${currentSize.toLocaleString()} (${multiplier}x)`;
