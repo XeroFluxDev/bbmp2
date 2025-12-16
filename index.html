@@ -666,6 +666,9 @@
         }
 
         function updateUI(data) {
+            // Extract bot_status for easier access
+            const botStatus = data.bot_status || {};
+
             // Check online status
             const lastSync = data.last_sync ? new Date(data.last_sync) : null;
             const isOnline = lastSync && (Date.now() - lastSync.getTime()) < OFFLINE_THRESHOLD * 1000;
@@ -674,7 +677,7 @@
             const statusText = document.getElementById('statusText');
             const connectionBanner = document.getElementById('connectionBanner');
 
-            if (isOnline && data.is_running) {
+            if (isOnline && botStatus.is_running) {
                 statusBadge.className = 'status-badge online';
                 statusText.textContent = 'Online';
                 connectionBanner.classList.remove('show');
@@ -699,7 +702,7 @@
             document.getElementById('winLossText').textContent = `${wins} wins / ${losses} losses`;
 
             document.getElementById('totalTrades').textContent = totalTrades;
-            document.getElementById('cycleCount').textContent = data.cycle_count || 0;
+            document.getElementById('cycleCount').textContent = botStatus.cycle_count || 0;
 
             // Position
             const position = data.active_trade;
@@ -754,13 +757,13 @@
             document.getElementById('martingaleProgress').style.width = `${(streak / maxStreak) * 100}%`;
 
             // Bot Info
-            document.getElementById('botStatus').textContent = data.is_running ? 'Running' : 'Stopped';
-            document.getElementById('botStatus').style.color = data.is_running ? 'var(--success)' : 'var(--danger)';
-            document.getElementById('environment').textContent = (data.environment || 'demo').toUpperCase();
-            document.getElementById('tradingSymbol').textContent = data.symbol || 'BTCUSDT';
-            document.getElementById('strategy').textContent = data.strategy || 'bbands_vwap';
+            document.getElementById('botStatus').textContent = botStatus.is_running ? 'Running' : 'Stopped';
+            document.getElementById('botStatus').style.color = botStatus.is_running ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('environment').textContent = (botStatus.environment || 'demo').toUpperCase();
+            document.getElementById('tradingSymbol').textContent = botStatus.symbol || 'BTCUSDT';
+            document.getElementById('strategy').textContent = botStatus.strategy || 'bbands_vwap';
 
-            const vwapTrend = data.vwap_trend || 'NEUTRAL';
+            const vwapTrend = botStatus.vwap_trend || 'NEUTRAL';
             const vwapEl = document.getElementById('vwapTrend');
             vwapEl.textContent = vwapTrend;
             if (vwapTrend === 'BULLISH') {
